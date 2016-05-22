@@ -1,8 +1,11 @@
 * [1.init调用顺序](#initOrder)
 + [2.执行顺序](#startOrder)
 + [3.值类型和引用类型](#valueType)
-+ [4.导出，Public](#4. 导出，Public)
++ [4.导出，Public](#public)
 + [5.函数](#func)
++ [6.注释](#comment)
++ [7.交换变量](#swap)
++ [8.测试](#测试)
 
 <h3 id="initOrder">1.init调用顺序</h2>
 + 每个package中应该是每个init都会被调用，且顺序固定
@@ -54,5 +57,6 @@ func functionName(parameter_list) (return_value_list) {
 ### <h3 id="swap">7. 交换变量</h3>
 +  如果你想要交换两个变量的值，则可以简单地使用 a, b = b, a。
 + 空白标识符 _ 也被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
-+
-+
+
+测试
+-------------------------
