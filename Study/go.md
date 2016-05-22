@@ -8,7 +8,7 @@
 + [交换变量](#swap)
 + [测试](#测试)
 
-<h3 id="initOrder">init调用顺序</h2>
+<h3 id="initOrder">init调用顺序</h3>
 --------------------------
 + 每个package中应该是每个init都会被调用，且顺序固定
 + 对同一个go文件的init()调用顺序是从上到下的
@@ -38,6 +38,7 @@
 
 ### import fm "fmt"// alias3
 ### <h3 id="func">function</h3>
+----------------------------------------
 ```
 func functionName(parameter_list) (return_value_list) {
   // parameter_list 的形式为 (param1 type1, param2 type2, …)
@@ -53,10 +54,12 @@ func functionName(parameter_list) (return_value_list) {
 + 如果是用于修改某个对象，则使用 SetName。有必须要的话可以使用大小写混合的方式，如 MixedCaps 或 mixedCaps，而不是使用下划线来分割多个名称。
 
 ### <h3 id="comment">注释</h3>
+--------------------------
 + 在多段注释之间应以空行分隔加以区分。
 + 几乎所有全局作用域的类型、常量、变量、函数和被导出的对象都应该有一个合理的注释。
 + 如果这种注释（称为文档注释）出现在函数前面，例如函数 Abcd，则要以 "Abcd..." 作为开头。
 
 ### <h3 id="swap">交换变量</h3>
+-------------------------------------
 +  如果你想要交换两个变量的值，则可以简单地使用 a, b = b, a。
 + 空白标识符 _ 也被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
