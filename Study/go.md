@@ -11,7 +11,7 @@
 + 对于不同的package，如果不相互依赖的话，按照main包中"先import的后调用"的顺序调用其包中的init()
 + 如果package存在依赖，则先调用最早被依赖的package中的init()
 
-### <span id="startOrder">2. Go 程序的执行（程序启动）顺序如下：</span>
+### <h3 id="startOrder">2. Go 程序的执行（程序启动）顺序如下：</h3>
 
 1. 按顺序导入所有被 main 包引用的其它包，然后在每个包中执行如下流程：
 2. 如果该包又导入了其它的包，则从第一步开始递归执行，但是每个包只会被导入一次。
@@ -31,7 +31,7 @@ _____________________________
 + 标识符如果以小写字母开头，则对包外是不可见的，但是他们在整个包的内部是可见并且可用的（像面向对象语言中的 private ）。
 
 ### import fm "fmt"// alias3
-### <span id="func">5. function</span>
+### <h3 id="func">5. function</h3>
 ```
 func functionName(parameter_list) (return_value_list) {
   // parameter_list 的形式为 (param1 type1, param2 type2, …)
@@ -46,12 +46,12 @@ func functionName(parameter_list) (return_value_list) {
 + 返回某个对象的函数或方法的名称一般都是使用名词，没有Get... 之类的字符，
 + 如果是用于修改某个对象，则使用 SetName。有必须要的话可以使用大小写混合的方式，如 MixedCaps 或 mixedCaps，而不是使用下划线来分割多个名称。
 
-### <span id="comment">6. 注释</span>
+### <h3 id="comment">6. 注释</h3>
 + 在多段注释之间应以空行分隔加以区分。
 + 几乎所有全局作用域的类型、常量、变量、函数和被导出的对象都应该有一个合理的注释。
 + 如果这种注释（称为文档注释）出现在函数前面，例如函数 Abcd，则要以 "Abcd..." 作为开头。
 
-### <span id="swap">7. 交换变量</span>
+### <h3 id="swap">7. 交换变量</h3>
 +  如果你想要交换两个变量的值，则可以简单地使用 a, b = b, a。
 + 空白标识符 _ 也被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
 +
