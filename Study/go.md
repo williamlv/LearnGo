@@ -114,7 +114,42 @@ const (
 )
 flag := Active | Send // == 3
 ```
+### <h3 id="string">字符串</h3>
+Go 支持以下 2 种形式的字面值
++ 解释字符串 使用双引号括起来，其中的相关的转义字符将被替换，这些转义字符包括：
+ + \u 或 \U：Unicode 字符
+ + \\：反斜杠自身
++ 非解释字符串：
+ + 该类字符串使用反引号括起来，支持换行，\n\` 会被原样输出。<br/>
 
+和 C/C++不一样，Go 中的字符串是根据长度限定，而非特殊字符\0。<br/>
+注意事项 获取字符串中某个字节的地址的行为是非法的，例如：&str[i]。<br/>
+在循环中使用加号 + 拼接字符串并不是最高效的做法，更好的办法是使用函数 strings.Join()（第 4.7.10 节），有没有更好地办法了？有！使用字节缓冲（bytes.Buffer）拼接更加给力（第 7.2.6 节）！
+- HasPrefix 判断字符串 s 是否以 prefix 开头
+- HasSuffix 判断字符串 s 是否以 suffix 结尾
+- Contains 判断字符串 s 是否包含 substr
+- Index 返回字符串 str 在字符串 s 中的索引
+- LastIndex 返回字符串 str 在字符串 s 中最后出现位置的索引
+- 如果 ch 是非 ASCII 编码的字符 strings.IndexRune(s string, r rune) int定位
+- Replace 用于将字符串 str 中的前 n 个字符串 old 替换为字符串 new
+- Count 用于计算字符串 str 在字符串 s 中出现的非重叠次数
+- Repeat 用于重复 count 次字符串 s 并返回一个新的字符串
+- ToLower 将字符串中的 Unicode 字符全部转换为相应的小写字符
+- ToUpper 将字符串中的 Unicode 字符全部转换为相应的大写字符
+- strings.TrimSpace(s) 来剔除字符串开头和结尾的空白符号
+- strings.Trim(s, "cut") 来将开头和结尾的 cut 去除掉,TrimLeft 或者 TrimRight
+- strings.Fields(s) 将会利用 1 个或多个空白符号来作为动态长度的分隔符将字符串分割成若干小块，并返回一个 slice，如果字符串只包含空白符号，则返回一个长度为 0 的 slice。
+- strings.Split(s, sep) 用于自定义分割符号来对指定字符串进行分割，同样返回 slice
+- Join 用于将元素类型为 string 的 slice 使用分割符号来拼接组成一个字符
+- trings.NewReader(str) 用于生成一个 Reader 并读取字符串中的内容,Read() 从 []byte 中读取内容,ReadByte() 和 ReadRune() 从字符串中读取下一个 byte 或者 rune
+- 与字符串相关的类型转换都是通过 strconv 包实现的
+- strconv.IntSize 获取程序运行的操作系统平台下 int 类型所占的位数
+```
+strconv.Atoi(s string) (i int, err error)
+strconv.ParseFloat(s string, bitSize int) (f float64, err error)
+strconv.Itoa(i int) string
+strconv.FormatFloat(f float64, fmt byte, prec int, bitSize int) string
+```
 
 
 
