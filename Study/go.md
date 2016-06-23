@@ -1,4 +1,4 @@
-## 目录
+# 目录
 + [init调用顺序](#initOrder)
 + [执行顺序](#startOrder)
 + [值类型和引用类型](#valueType)
@@ -7,6 +7,49 @@
 + [注释](#comment)
 + [交换变量](#swap)
 + [其它](#other)
++ [格式化说明符](#format)
++ [位运算符](#type)
++ [字符串](#string)
++ [安装目录清单](#安装目录清单)
+
+ # 环境变量
++ $GOROOT 安装目录
++ $GOBIN $GOROOT/bin
++ $GOPATH 项目路径,必须包含三个目录
+ - src
+ - pkg
+ - bin
+
+# 安装目录清单
+你的 Go 安装目录（`$GOROOT`）的文件夹结构应该如下所示：
+
+README.md, AUTHORS, CONTRIBUTORS, LICENSE
+
+- `/bin`：包含可执行文件，如：编译器，Go 工具
+- `/doc`：包含示例程序，代码工具，本地文档等
+- `/lib`：包含文档模版
+- `/misc`：包含与支持 Go 编辑器有关的配置文件以及 cgo 的示例
+- `/os_arch`：包含标准库的包的对象文件（`.a`）
+- `/src`：包含源代码构建脚本和标准库的包的完整源代码（Go 是一门开源语言）
+- `/src/cmd`：包含 Go 和 C 的编译器和命令行脚本
+
+# 调试器
+- 在合适的位置使用打印语句输出相关变量的值（print/println 和 fmt.Print/fmt.Println/fmt.Printf）。
+
+-在 fmt.Printf 中使用下面的说明符来打印有关变量的相关信息：
+
+ - %+v 打印包括字段在内的实例的完整信息
+ - %#v 打印包括字段和限定类型名称在内的实例的完整信息
+ - %T 打印某个类型的完整说明
+
+# 格式化代码 gofmt
+[参考](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/03.5.md)
+
+# 生成代码文档
+[参考](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/03.6.md)
+```
+go doc package
+```
 
 ### <h3 id="initOrder">init调用顺序</h3>
 --------------------------
