@@ -1,6 +1,10 @@
+
 # 目录
++ [环境变量](#环境变量)
++ [安装目录清单](#安装目录清单)
 + [init调用顺序](#initOrder)
 + [执行顺序](#startOrder)
++ [基本类型](#baseType)
 + [值类型和引用类型](#valueType)
 + [导出，Public](#public)
 + [函数](#func)
@@ -8,11 +12,12 @@
 + [交换变量](#swap)
 + [其它](#other)
 + [格式化说明符](#format)
-+ [位运算符](#type)
++ [位运算符](#byte)
 + [字符串](#string)
-+ [安装目录清单](#安装目录清单)
++ [常用包](#package)
 
- # 环境变量
+
+# 环境变量
 + $GOROOT 安装目录
 + $GOBIN $GOROOT/bin
 + $GOPATH 项目路径,必须包含三个目录
@@ -66,6 +71,18 @@ go doc package
 3. 然后以相反的顺序在每个包中初始化常量和变量，如果该包含有 init 函数的话，则调用该函数。
 4. 在完成这一切之后，main 也执行同样的过程，最后调用 main 函数开始执行程序。
 
+### <h3 id="baseType">基本类型</h3>
+```
+int uint unitptr
+int8 int16 int32 int64 uint8 uin16 uint32 uint64
+float32 //小数点后7位
+float64 、、15
+m = int32(n)
+complex64 //32位实数和虚数
+complex128 //64位实数和虚数
+```
+类型之前需要显式转换。
+
 ### <h3 id="valueType">值类型和引用类型</h3>
 -----------------------
 + 所有像 int、float、bool 和 string 这些基本类型都属于值类型,
@@ -113,7 +130,13 @@ import fm "fmt"// alias3
 #### 空白标识符_
 被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
 #### 使用 := 赋值操作符
-变量的类型而由系统自动推断
+变量定义采用后置类型
+```
+var identifier type;
+var aaa, bbb int32;
+a := 1;
+```
+变量的类型可由系统自动推断
 只能被用在函数体内，而不可以用于全局变量的声明与赋值
 不可以再次对于相同名称的变量使用初始化声明
 使用 a := uint64(0) 来同时完成类型转换和赋值操作
@@ -126,6 +149,7 @@ import fm "fmt"// alias3
 除了使用 g 之外，还可以使用 e 或者 f，<br/>
 例如：使用格式化字符串 %5.2e 来输出 3.4 的结果为 3.40e+00。<br/>
 %b 是用于表示位的格式化标识符
+
 ### <h3 id="byte">位运算符</h3>
 + 位清除 &^：将指定位置上的值设置为 0<br/>
 + 按位异或 ^
@@ -149,7 +173,7 @@ const (
 <br/>
 在通讯中使用位左移表示标识的用例<br/>
 ```
-type BitFlag int
+type BitFlag int //类型别名
 const (
     Active BitFlag = 1 << iota // 1 << 0 == 1
     Send // 1 << 1 == 2
@@ -157,6 +181,7 @@ const (
 )
 flag := Active | Send // == 3
 ```
+
 ### <h3 id="string">字符串</h3>
 Go 支持以下 2 种形式的字面值
 + 解释字符串 使用双引号括起来，其中的相关的转义字符将被替换，这些转义字符包括：
@@ -221,5 +246,10 @@ strconv.FormatFloat(f float64, fmt byte, prec int, bitSize int) string
 
 
 ###  <h3 id="package">常用包</br>
-+ math.rand   rand.Int() rand.Intn(8)
-+ unicode IsLetter(ch) IsDigit(ch) IsSpace(ch)
+```
+import "math/rand" 
+math.rand   
+rand.Int() 
+rand.Intn(8)
+math.MaxUnit8 math.MinInt32 math.MaxInt32
+unicode IsLetter(ch) IsDigit(ch) IsSpace(ch)
