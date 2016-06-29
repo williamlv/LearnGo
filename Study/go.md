@@ -18,10 +18,9 @@
     - [闭包调试](#闭包调试)
 - [注释](#注释)
 - [交换变量](#交换变量)
-- [其它](#其它)
-    - [import别名](#import别名)
-    - [空白标识符_](#空白标识符_)
-    - [使用 := 赋值操作符](#使用--赋值操作符)
+- [包引用](#包引用)
+- [空白标识符_](#空白标识符_)
+- [使用 := 赋值操作符](#使用--赋值操作符)
 - [格式化说明符](#格式化说明符)
 - [位运算符](#位运算符)
 - [字符](#字符)
@@ -34,6 +33,9 @@
 - [内置函数](#内置函数)
 - [数组](#数组)
 - [切片](#切片)
+- [bytes包](#bytes包)
+- [map](#map)
+- [锁](#锁)
 
 <!-- /MarkdownTOC -->
 
@@ -193,6 +195,7 @@ var where1 = log.Print
 where1()
 
 ```
+
 # 注释
 + 在多段注释之间应以空行分隔加以区分。
 + 几乎所有全局作用域的类型、常量、变量、函数和被导出的对象都应该有一个合理的注释。
@@ -201,12 +204,17 @@ where1()
 # 交换变量
 +  如果你想要交换两个变量的值，则可以简单地使用 a, b = b, a。
 
-# 其它
-## import别名
+# 包引用
 import fm "fmt"// alias3
-## 空白标识符_
+import . "./pack1" //可以不通过包名来使用其中的项目
+import _ "./pack1/pack1" //导入副作用，只执行init和初始化全局变量
+go install codesite.ext/author/goExample/goex //导入外部安装包，使用 import goex即可引用
+import goex "codesite.ext/author/goExample/goex" //导入代码中
+
+# 空白标识符_
 被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
-## 使用 := 赋值操作符
+
+# 使用 := 赋值操作符
 变量定义采用后置类型
 ```
 var identifier type;
@@ -306,6 +314,49 @@ rand.Int()
 rand.Intn(8)
 math.MaxUnit8 math.MinInt32 math.MaxInt32
 unicode IsLetter(ch) IsDigit(ch) IsSpace(ch)
+archive/tar 和 /zip-compress：压缩(解压缩)文件功能。
+fmt-io-bufio-path/filepath-flag:
+fmt: 提供了格式化输入输出功能。
+io: 提供了基本输入输出功能，大多数是围绕系统功能的封装。
+bufio: 缓冲输入输出功能的封装。
+path/filepath: 用来操作在当前系统中的目标文件名路径。
+flag: 对命令行参数的操作。　　
+strings-strconv-unicode-regexp-bytes:
+strings: 提供对字符串的操作。
+strconv: 提供将字符串转换为基础类型的功能。
+unicode: 为 unicode 型的字符串提供特殊的功能。
+regexp: 正则表达式功能。
+bytes: 提供对字符型分片的操作。
+index/suffixarray: 子字符串快速查询。
+math-math/cmath-math/big-math/rand-sort:
+math: 基本的数学函数。
+math/cmath: 对复数的操作。
+math/rand: 伪随机数生成。
+sort: 为数组排序和自定义集合。
+math/big: 大数的实现和计算。 　　
+container-/list-ring-heap: 实现对集合的操作。
+list: 双链表。
+unsafe: 包含了一些打破 Go 语言“类型安全”的命令，一般的程序中不会被使用，可用在 C/C++ 程序的调用中。
+syscall-os-os/exec:
+os: 提供给我们一个平台无关性的操作系统功能接口，采用类Unix设计，隐藏了不同操作系统间差异，让不同的文件系统和操作系统对象表现一致。
+os/exec: 提供我们运行外部操作系统命令和程序的方式。
+syscall: 底层的外部包，提供了操作系统底层调用的基本接口
+time-log:
+time: 日期和时间的基本操作。
+log: 记录程序运行时产生的日志,我们将在后面的章节使用它。
+encoding/json-encoding/xml-text/template:
+encoding/json: 读取并解码和写入并编码 JSON 数据。
+encoding/xml:简单的 XML1.0 解析器,有关 JSON 和 XML 的实例请查阅第 12.9/10 章节。
+text/template:生成像 HTML 一样的数据与文本混合的数据驱动模板（参见第 15.7 节）。
+net-net/http-html:（参见第 15 章）
+net: 网络数据的基本操作。
+http: 提供了一个可扩展的 HTTP 服务器和基础客户端，解析 HTTP 请求和回复。
+html: HTML5 解析器。
+runtime: Go 程序运行时的交互操作，例如垃圾回收和协程创建。
+reflect: 实现通过程序运行时反射，让程序操作任意类型的变量。
+regexp: 正则表达式，需要Compile
+pat := "[0-9]+.[0-9]+" 
+re, _ := regexp.Compile(pat)
 ```
 
 # 指针
@@ -406,4 +457,71 @@ func Sum(a *[3]float64) (sum float64) {
 ```
 
 # 切片
+- 声明切片的格式是： var identifier []type（不需要说明长度）。   
+- 一个切片在未初始化之前默认为 nil，长度为 0。   
+- 切片的初始化格式是：var slice1 []type = arr1[start:end]。   
+- 终止索引标识的项不包括在切片内, start到end-1f索引构成的子集       
+- var slice1 []type = arr1[:] 那么 slice1 就等于完整的 arr1 数组（所以这种表示方式是 arr1[0:len(arr1)] 的一种缩写）。另外一种表述方式是：slice1 = &arr1。   
+- var slice1 []type = make([]type, len)。   //slice1 := make([]type, len),slice1 := make([]type, len, cap)。
+- len() cap() copy() append() sort.Ints(arri) IntsAreSorted(a []int) bool SearchInts()
+x = append(x, y...) //切片y扩展成列表追加到x
+- 切片重组
+sl = sl[0:len(sl)+1] //扩展1位
+- 字符串
+```
+c := []bytes(s)
+copy(dst []byte, src string)
+```
 
+# bytes包
+- 类型 Buffer, 提供Read 和 Write 方法
+```
+var buffer bytes.Buffer
+var r *bytes.Buffer = new(bytes.Buffer)
+func NewBuffer(buf []byte) *Buffer
+```
+
+# map
+```
+var map1 map[keytype]valuetype
+var map1 map[string]int
+val1, isPresent = map1[key1] //key1存在，isPresent为true
+```
+- 未初始化的 map 的值是 nil。
+- 数组、切片和结构体不能作为 key，但是指针和接口类型可以
+- 如果要用结构体作为 key 可以提供 Key() 和 Hash() 方法
+- value 可以是任意类型的；通过使用空接口类型（详见第 11.9 节），我们可以存储任意值，但是使用这种类型作为值时需要先做一次类型断言（详见第 11.3 节）。
+- 不要使用 new，永远用 make 来构造 map
+- 可以选择标明 map 的初始容量 capacity，就像这样：make(map[keytype]valuetype, cap)
+- delete(map1, key1) //key1不存在不会产生错误
+- 获取一个 map 类型的切片，我们必须使用两次 make() 函数，第一次分配切片，第二次分配 切片中每个 map 元素
+```
+items := make([]map[int]int, 5)
+    for i:= range items {
+        items[i] = make(map[int]int, 1)
+        items[i][1] = 2
+    }
+//value是切片
+mp1 := make(map[int][]int)
+mp2 := make(map[int]*[]int)
+//map拷贝到切片
+keys := make([]string, len(barVal))
+i := 0
+for k, _ := range barVal {
+    keys[i] = k
+    i++
+}
+```
+
+# 锁
+sync 包中 Mutex 来实现的
+```
+import "sync"
+
+type Info struct {
+    mu sync.Mutex    
+}
+
+info.mu.Lock()
+info.mu.Unlock()
+```
