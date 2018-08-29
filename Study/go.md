@@ -36,6 +36,11 @@
 - [bytes包](#bytes包)
 - [map](#map)
 - [锁](#锁)
+- [方法](#方法)
+- [垃圾回收](#垃圾回收)
+- [接口](#接口)
+- [面向对象](#面向对象)
+- [goroutine channel](#goroutine-channel)
 
 <!-- /MarkdownTOC -->
 
@@ -127,7 +132,8 @@ func functionName(parameter_list) (return_value_list) {
 + 函数也可以是一个确定的类型，就是以函数作为返回类型。
 + 这种类型的声明要写在函数名和可选的参数列表之后。"{"在第一行
 + 一个函数可以拥有多返回值，返回类型之间需要使用逗号分割，并使用小括号 () 将它们括起来
-+ 使用 type 关键字可以定义你自己的类型，type IZ int。type Employee struct{company string}
++ 使用 type 关键字可以定义你自己的类型，type IZ int。type Employee struct{company string}   
+如果 File 是一个结构体类型，那么表达式 new(File) 和 &File{} 是等价的。
 + 返回某个对象的函数或方法的名称一般都是使用名词，没有Get... 之类的字符，
 + 如果是用于修改某个对象，则使用 SetName。有必须要的话可以使用大小写混合的方式，如 MixedCaps 或 mixedCaps，而不是使用下划线来分割多个名称。
 + 不支持函数重载，函数重载需要进行多余的类型匹配影响性能
@@ -524,4 +530,121 @@ type Info struct {
 
 info.mu.Lock()
 info.mu.Unlock()
+```
+
+# 方法
+Go 方法是作用在接收者（receiver）上的一个函数，接收者是某种类型的变量。因此方法是一种特殊类型的函数。   
+接收者不能是一个指针类型，但是它可以是任何其他允许类型的指针。    
+func (recv receiver_type) methodName(parameter_list) (return_value_list) { ... }    
+在方法名之前，func 关键字之后的括号中指定 receiver。
+```
+type TwoInts struct {
+    a int
+    b int
+}
+
+type Car struct {
+    TwoInts //通过匿名字段实现继承
+}
+func (tn *TwoInts) AddThem() int {
+    return tn.a + tn.b
+}
+func (tn *TwoInts) String() string {
+    return "(" + strconv.Itoa(tn.a) + "/" + strconv.Itoa(tn.b) + ")"
+} //格式化会自动调用String()
+```
+recv 最常见的是一个指向 receiver_type     的指针（因为我们不想要一个实例的拷贝，如果按值调用的话就会是这样），特别是在 receiver 类型是结构体时，就更是如此了。    
+如果想要方法改变接收者的数据，就在接收者的指针类型上定义该方法。否则，就在普通的值类型上定义方法。    
+对于类型 T，如果在 *T 上存在方法 Meth()，并且 t 是这个类型的变量，那么 t.Meth() 会被自动转换为 (&t).Meth()。    
+它展示了内嵌结构体上的方法可以直接在外层类型的实例上调用：   
+可以覆写方法（像字段一样）：和内嵌类型方法具有同样名字的外层类型的方法会覆写内嵌类型对应的方法。
+
+# 垃圾回收
+runtime包访问GC进程
+var m runtime.MemStats
+runtime.ReadMemStats(&m)
+fmt.Printf("%d Kb", m.Alloc/1024)
+如果需要在一个对象 obj 被从内存移除前执行一些特殊操作
+runtime.SetFinalizer(obj, func(obj *typeObj))
+
+# 接口
+接口定义了一组方法（方法集），但是这些方法不包含（实现）代码：它们没有被实现（它们是抽象的）。接口里也不能包含变量。   
+
+按照约定，只包含一个方法的接口的名字由方法名加 [e]r 后缀组成    
+
+类型不需要显式声明它实现了某个接口：接口被隐式地实现。多个类型可以实现同一个接口。
+
+实现某个接口的类型（除了实现接口方法外）可以有其他的方法。
+
+一个类型可以实现多个接口。
+
+接口类型可以包含一个实例的引用， 该实例的类型实现了此接口（接口是动态类型）。
+```
+package main
+import "fmt"
+type Shaper interface {
+    Area() float32
+}
+type Square struct {
+    side float32
+}
+func (sq *Square) Area() float32 {
+    return sq.side * sq.side
+}
+type Rectangle struct {
+    length, width float32
+}
+func (r Rectangle) Area() float32 {
+    return r.length * r.width
+}
+func main() {
+    r := Rectangle{5, 3} // Area() of Rectangle needs a value
+    q := &Square{5}      // Area() of Square needs a pointer
+    // shapes := []Shaper{Shaper(r), Shaper(q)}
+    // or shorter
+    shapes := []Shaper{r, q}
+    fmt.Println("Looping through shapes for area ...")
+    for n, _ := range shapes {
+        fmt.Println("Shape details: ", shapes[n])
+        fmt.Println("Area of this shape is: ", shapes[n].Area())
+    }
+}
+if _, ok := varI.(T); ok { //检测varI接口类型是T
+    // ...
+}
+在 type-switch 不允许有 fallthrough ， 所有 case 语句中列举的类型（nil 除外）都必须实现对应的接口
+switch t := areaIntf.(type) {
+case *Square:
+ 
+```
+在接口上调用方法时，必须有和方法定义时相同的接收者类型或者是可以从具体类型 P 直接可以辨识的：
+
+- 指针方法可以通过指针调用
+- 值方法可以通过值调用
+- 接收者是值的方法可以通过指针调用，因为指针会首先被解引用
+- 接收者是指针的方法不可以通过值调用，因为存储在接口中的值没有地址
+- 将一个值赋值给一个接口赋值时，编译器会确保所有可能的接口方法都可以在此值上被调用，因此不正确的赋值在编译期就会失败。
+- [排序的接口](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/11.7.md)
+- 空接口 type Any interface{} //可以给空接口变量赋任何类型的值
+
+# 面向对象
+- 封装（数据隐藏）：和别的 OO 语言有 4 个或更多的访问层次相比，Go 把它简化为了 2 层（参见 4.2 节的可见性规则）:
+
+ - 包范围内的：通过标识符首字母小写，对象 只在它所在的包内可见
+
+ - 可导出的：通过标识符首字母大写，对象 对所在包以外也可见
+类型只拥有自己所在包中定义的方法。
+
+- 继承：用组合实现：内嵌一个（或多个）包含想要的行为（字段和方法）的类型；多重继承可以通过内嵌多个类型实现
+- 多态：用接口实现：某个类型的实例可以赋给它所实现的任意接口类型的变量。类型和接口是松耦合的，并且多重继承可以通过实现多个接口实现。Go 接口不是 Java 和 C# 接口的变体，而且：接口间是不相关的，并且是大规模编程和可适应的演进型设计的关键。
+
+# goroutine channel
+- 对于同一个通道，发送操作（协程或者函数中的），在接收者准备好之前是阻塞的：如果ch中的数据无人接收，就无法再给通道传入其他数据：新的输入无法在通道非空的情况下传入。所以发送操作会等待 ch 再次变为可用状态：就是通道值被接收时（可以传入变量）。
+- 对于同一个通道，接收操作是阻塞的（协程或函数中的），直到发送者可用：如果通道中没有数据，接收者就阻塞了。
+尽管这看上去是非常严格的约束，实际在大部分情况下工作的很不错。
+创建了一个长度可变但容量为0的通道表示信号量
+```
+type Empty interface {}
+type semaphore chan Empty
+sem = make(semaphore, N)
 ```
